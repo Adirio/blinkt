@@ -21,38 +21,74 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+import colorsys
 
 
 class Color:
     __slots__ = ('_r', '_g', '_b')
 
     def __init__(self, r: float=0.0, g: float=0.0, b: float=0.0) -> None:
-        pass
+        # Check boundaries
+        if r < 0.0:
+            r = 0.0
+        elif r > 1.0:
+            r = 1.0
+        if g < 0.0:
+            g = 0.0
+        elif g > 1.0:
+            g = 1.0
+        if b < 0.0:
+            b = 0.0
+        elif b > 1.0:
+            b = 1.0
+
+        # Store the values
+        self._r = r
+        self._g = g
+        self._b = b
 
     @classmethod
     def rgb(cls, r: int=0, g: int=0, b: int=0) -> "Color":
-        return cls()
+        # Check boundaries
+        if r < 0:
+            r = 0
+        elif r > 255:
+            r = 255
+        if g < 0:
+            g = 0
+        elif g > 255:
+            g = 255
+        if b < 0:
+            b = 0
+        elif b > 255:
+            b = 255
+
+        # Create the instance
+        return cls(r, g, b)
 
     @classmethod
     def hls(cls, h: float, l: float, s: float) -> "Color":
-        return cls()
+        # TODO: boundary check?
+        return cls(*colorsys.hls_to_rgb(h, l, s))
 
     @classmethod
     def hsv(cls, h: float, s: float, v: float) -> "Color":
-        return cls()
+        # TODO: boundary check?
+        return cls(*colorsys.hsv_to_rgb(h, s, v))
 
     @classmethod
     def yiq(cls, y: float, i: float, q: float) -> "Color":
-        return cls()
+        # TODO: boundary check?
+        return cls(*colorsys.yiq_to_rgb(y, i, q))
 
     @property
     def r(self) -> float:
-        return 0.0
+        return self._r
 
     @property
     def g(self) -> float:
-        return 0.0
+        return self._g
 
     @property
     def b(self) -> float:
-        return 0.0
+        return self._b
