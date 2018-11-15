@@ -21,33 +21,51 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from typing import Tuple
+from itertools import cycle
+from typing import Sequence, Tuple, Union
 
 from .colors import Color
-
-NUM_LEDS = 8
+from .led import Led, NUM_LEDS
 
 
 class LedArray(tuple):
+    _instance = None
+
     def __new__(cls) -> "LedArray":
-        return super().__new__(cls)
+        if not cls._instance:
+            cls._instance = super().__new__(
+                cls, (Led(i) for i in range(NUM_LEDS)))
+        return cls._instance
+
+    def __str__(self) -> str:
+        return "[{}]".format(", ".join(map(str, self)))
 
     @property
     def color(self) -> Tuple[Color, ...]:
-        return Color(),
+        return tuple(led.color for led in self)
 
     @color.setter
-    def color(self, value: Color) -> None:
-        pass
+    def color(self, value: Union[Color, Sequence[Color]]) -> None:
+        # Handle single items as sequences
+        if isinstance(value, Color):
+            value = [value]
+        # Apply the color in a cycle
+        for led, color in zip(self, cycle(value)):
+            led.color = color
 
     @color.deleter
     def color(self) -> None:
-        pass
+        self.color = Color()
 
     @property
     def brightness(self) -> Tuple[float, ...]:
-        return 0.0,
+        return tuple(led.brightness for led in self)
 
     @brightness.setter
-    def brightness(self, value: float) -> None:
-        pass
+    def brightness(self, value: Union[float, Sequence[float]]) -> None:
+        # Handle single items as sequences
+        if isinstance(value, float):
+            value = [value]
+        # Apply the brightness in a cycle
+        for led, brightness in zip(self, cycle(value)):
+            led.brightness = brightness

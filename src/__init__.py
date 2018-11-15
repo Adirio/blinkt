@@ -22,8 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from .array import LedArray, NUM_LEDS
-from .led import Led
+from .array import LedArray
+from .colors import Color
+from .led import NUM_LEDS
 
 
 __all__ = (
@@ -31,6 +32,6 @@ __all__ = (
     NUM_LEDS,
 
     # Classes
-    Led,
     LedArray,
+    Color,
 )

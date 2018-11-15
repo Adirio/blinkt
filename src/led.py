@@ -23,30 +23,47 @@ SOFTWARE.
 """
 from .colors import Color
 
+NUM_LEDS = 8
+
+_instance = None
+
 
 class Led:
     __slots__ = ('_i', '_color', '_brightness')
 
+    def __new__(cls, i: int) -> "Led":
+        global _instance
+        if not _instance:
+            _instance = [super(Led, cls).__new__(cls) for _ in range(NUM_LEDS)]
+        return _instance[i]
+
     def __init__(self, i: int) -> None:
-        """"""
-        pass
+        self._i = i
+        # Color and brightness will be read through their getters so initial
+        # values do not matter
+        self._color = Color()
+        self._brightness = 0.0
+
+    def __str__(self) -> str:
+        return "<Led {} color={} brightness={}>".format(
+            self._i + 1, self._color, self._brightness)
 
     @property
     def color(self) -> Color:
-        return Color()
+        return self._color
 
     @color.setter
     def color(self, value: Color) -> None:
-        pass
+        self._color = value
 
     @color.deleter
     def color(self) -> None:
-        pass
+        self._color = Color()
 
     @property
     def brightness(self) -> float:
-        return 0.0
+        return self._brightness
 
     @brightness.setter
     def brightness(self, value: float) -> None:
-        pass
+        self._brightness = value

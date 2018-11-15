@@ -81,6 +81,13 @@ class Color:
         # TODO: boundary check?
         return cls(*colorsys.yiq_to_rgb(y, i, q))
 
+    def __str__(self) -> str:
+        return "RGB({}, {}, {})".format(
+            int(self._r * 255),
+            int(self._g * 255),
+            int(self._b * 255),
+        )
+
     @property
     def r(self) -> float:
         return self._r
