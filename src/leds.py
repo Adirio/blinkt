@@ -31,54 +31,54 @@ NUM_LEDS = 8
 _instance = None
 
 
-class Led:
-    __slots__ = ('_i', '_color', '_brightness')
+class Array(tuple):
+    class Led:
+        __slots__ = ('_i', '_color', '_brightness')
 
-    def __new__(cls, i: int) -> "Led":
-        global _instance
-        if not _instance:
-            _instance = [super(Led, cls).__new__(cls) for _ in range(NUM_LEDS)]
-        return _instance[i]
+        def __new__(cls, i: int) -> "Led":
+            global _instance
+            if not _instance:
+                _instance = [super(LedArray.Led, cls).__new__(cls) for _ in
+                             range(NUM_LEDS)]
+            return _instance[i]
 
-    def __init__(self, i: int) -> None:
-        self._i = i
-        # Color and brightness will be read through their getters so initial
-        # values do not matter
-        self._color = Color()
-        self._brightness = 0.0
+        def __init__(self, i: int) -> None:
+            self._i = i
+            # Color and brightness will be read through their getters so
+            # initial values do not matter
+            self._color = Color()
+            self._brightness = 0.0
 
-    def __str__(self) -> str:
-        return "<Led {} color={} brightness={}>".format(
-            self._i + 1, self._color, self._brightness)
+        def __str__(self) -> str:
+            return "<Led {} color={} brightness={}>".format(
+                self._i + 1, self._color, self._brightness)
 
-    @property
-    def color(self) -> Color:
-        return self._color
+        @property
+        def color(self) -> Color:
+            return self._color
 
-    @color.setter
-    def color(self, value: Color) -> None:
-        self._color = value
+        @color.setter
+        def color(self, value: Color) -> None:
+            self._color = value
 
-    @color.deleter
-    def color(self) -> None:
-        self._color = Color()
+        @color.deleter
+        def color(self) -> None:
+            self._color = Color()
 
-    @property
-    def brightness(self) -> float:
-        return self._brightness
+        @property
+        def brightness(self) -> float:
+            return self._brightness
 
-    @brightness.setter
-    def brightness(self, value: float) -> None:
-        self._brightness = value
+        @brightness.setter
+        def brightness(self, value: float) -> None:
+            self._brightness = value
 
-
-class LedArray(tuple):
     _instance = None
 
-    def __new__(cls) -> "LedArray":
+    def __new__(cls) -> "Array":
         if not cls._instance:
             cls._instance = super().__new__(
-                cls, (Led(i) for i in range(NUM_LEDS)))
+                cls, (Array.Led(i) for i in range(NUM_LEDS)))
         return cls._instance
 
     def __str__(self) -> str:
