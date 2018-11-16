@@ -44,8 +44,6 @@ class Array(tuple):
 
         def __init__(self, i: int) -> None:
             self._i = i
-            # Color and brightness will be read through their getters so
-            # initial values do not matter
             self._color = Color()
             self._brightness = 0.0
 
