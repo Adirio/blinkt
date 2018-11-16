@@ -28,19 +28,10 @@ from .colors import Color
 
 NUM_LEDS = 8
 
-_instance = None
-
 
 class Array(tuple):
     class Led:
         __slots__ = ('_i', '_color', '_brightness')
-
-        def __new__(cls, i: int) -> "Led":
-            global _instance
-            if not _instance:
-                _instance = [super(LedArray.Led, cls).__new__(cls) for _ in
-                             range(NUM_LEDS)]
-            return _instance[i]
 
         def __init__(self, i: int) -> None:
             self._i = i
