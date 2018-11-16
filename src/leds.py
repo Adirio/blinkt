@@ -25,11 +25,12 @@ from itertools import cycle
 from typing import Sequence, Tuple, Union
 
 from .colors import Color
+from .singleton import Singleton
 
 NUM_LEDS = 8
 
 
-class Array(tuple):
+class Array(tuple, metaclass=Singleton):
     class Led:
         __slots__ = ('_color', '_brightness')
 
@@ -61,13 +62,8 @@ class Array(tuple):
         def brightness(self, value: float) -> None:
             self._brightness = value
 
-    _instance = None
-
     def __new__(cls) -> "Array":
-        if not cls._instance:
-            cls._instance = super().__new__(
-                cls, (Array.Led() for _ in range(NUM_LEDS)))
-        return cls._instance
+        return super().__new__(cls, (cls.Led() for _ in range(NUM_LEDS)))
 
     def __str__(self) -> str:
         return "[{}]".format(", ".join(map(str, self)))
