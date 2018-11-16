@@ -31,16 +31,15 @@ NUM_LEDS = 8
 
 class Array(tuple):
     class Led:
-        __slots__ = ('_i', '_color', '_brightness')
+        __slots__ = ('_color', '_brightness')
 
-        def __init__(self, i: int) -> None:
-            self._i = i
+        def __init__(self) -> None:
             self._color = Color()
             self._brightness = 0.0
 
         def __str__(self) -> str:
-            return "<Led {} color={} brightness={}>".format(
-                self._i + 1, self._color, self._brightness)
+            return "<Led color={} brightness={}>".format(
+                self._color, self._brightness)
 
         @property
         def color(self) -> Color:
@@ -67,7 +66,7 @@ class Array(tuple):
     def __new__(cls) -> "Array":
         if not cls._instance:
             cls._instance = super().__new__(
-                cls, (Array.Led(i) for i in range(NUM_LEDS)))
+                cls, (Array.Led() for _ in range(NUM_LEDS)))
         return cls._instance
 
     def __str__(self) -> str:
