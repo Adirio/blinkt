@@ -24,7 +24,7 @@ SOFTWARE.
 
 from .array import LedArray
 from .colors import Color
-from .led import NUM_LEDS
+from .leds import NUM_LEDS
 
 
 __all__ = (

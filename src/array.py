@@ -25,7 +25,7 @@ from itertools import cycle
 from typing import Sequence, Tuple, Union
 
 from .colors import Color
-from .led import Led, NUM_LEDS
+from .leds import Led, NUM_LEDS
 
 
 class LedArray(tuple):
