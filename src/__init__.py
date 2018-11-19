@@ -22,14 +22,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 from .colors import Color
-from .leds import NUM_LEDS, Array
+from .leds import Array
 
 
 __all__ = (
-    # Constants
-    NUM_LEDS,
-
-    # Classes
     Array,
     Color,
 )
