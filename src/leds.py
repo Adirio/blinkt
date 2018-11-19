@@ -83,7 +83,8 @@ class Array(tuple, metaclass=Singleton):
 
     @color.deleter
     def color(self) -> None:
-        self.color = Color()
+        for led in self:
+            del led.color
 
     @property
     def brightness(self) -> Tuple[float, ...]:
