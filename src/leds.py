@@ -30,6 +30,7 @@ from .colors import Color
 from .singleton import Singleton
 
 NUM_LEDS = 8
+MAX_BRIGHTNESS = 31
 
 
 class _Tuple(tuple):
@@ -45,14 +46,14 @@ class Array(_Tuple, metaclass=Singleton):
 
         def __init__(self) -> None:
             self._color = Color()
-            self._brightness = 0.0
+            self._brightness = MAX_BRIGHTNESS // 2
             self._lock = Lock()
             self._ownership = RLock()
 
         def __str__(self) -> str:
             with self._lock:
                 return "<Led color={} brightness={}>".format(
-                    self._color, self._brightness)
+                    self._color, self._brightness / MAX_BRIGHTNESS)
 
         def __enter__(self) -> "Array.Led":
             # Initialization
@@ -95,12 +96,12 @@ class Array(_Tuple, metaclass=Singleton):
         @property
         def brightness(self) -> float:
             with self._lock:
-                return self._brightness
+                return self._brightness / MAX_BRIGHTNESS
 
         @brightness.setter
         def brightness(self, value: float) -> None:
             with self._ownership, self._lock:
-                self._brightness = value
+                self._brightness = int(value * MAX_BRIGHTNESS)
 
     def __new__(cls) -> "Array":
         array = super().__new__(cls, (cls.Led() for _ in range(NUM_LEDS)))
