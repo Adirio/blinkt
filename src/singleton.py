@@ -21,9 +21,10 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+from typing import Any, Dict, Tuple
 
 
-def mangle(class_name, attribute):
+def mangle(class_name: str, attribute: str) -> str:
     """
     Mangle private attributes:
         cls.attribute     => cls.attribute
@@ -60,7 +61,13 @@ class Singleton(type):
             def __init__(self):
                 pass
     """
-    def __init__(cls, name, bases, attrs, instance='__instance'):
+    def __init__(
+            cls,
+            name: str,
+            bases: Tuple,
+            attrs: Dict[str, Any],
+            instance: str='__instance',
+    ) -> None:
         # Name mangling
         mangled_instance = mangle(name, instance)
 
