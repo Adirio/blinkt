@@ -23,6 +23,19 @@ SOFTWARE.
 """
 
 
+def mangle(class_name, attribute):
+    """
+    Mangle private attributes:
+        cls.attribute     => cls.attribute
+        cls._attribute    => cls._attribute
+        cls.__attribute   => cls._name__attribute  <-----
+        cls.__attribute__ => cls.__attribute__
+    """
+    if attribute.startswith('__') and not attribute.endswith('__'):
+        attribute = '_' + class_name + attribute
+    return attribute
+
+
 class Singleton(type):
     """
     Metaclass that turns the class into a singleton
@@ -33,44 +46,35 @@ class Singleton(type):
     parameters. However, singletons should not need initialization parameters
     as they only have one instance.
 
+    The private class attribute __instance is used internally. If this wants to
+    be used by the class, another attribute name should be provided through the
+    instance class keyword argument.
+
     Usage:
-        class SingletonExample(metaclass=Singleton):
+        class SingleExample(metaclass=Singleton):
+            def __init__(self):
+                pass
+
+        class SingleExample2(metaclass=Singleton, instance='__qwerty'):
+            __instance = "my class variable"
             def __init__(self):
                 pass
     """
-    _attribute = '__singleton'
-
-    def __new__(mcs, name, bases, classdict):
+    def __init__(cls, name, bases, attrs, instance='__instance'):
         # Name mangling
-        singleton_attribute = mcs.mangle_attribute(name, mcs._attribute)
+        mangled_instance = mangle(name, instance)
 
         # Panic if it is already used
-        if singleton_attribute in classdict:
+        if mangled_instance in attrs:
             raise AttributeError(
                 "Singleton pattern uses {}.{} but it was already defined in "
-                "the class".format(name, mcs._attribute)
+                "the class".format(name, instance)
             )
 
-        # Create the class
-        cls = super().__new__(mcs, name, bases, classdict)
-
         # Create the single instance and store it
-        setattr(cls, singleton_attribute, cls())
+        setattr(cls, mangled_instance, cls())
 
         # Replace the constructor method
-        cls.__new__ = lambda kls: getattr(kls, singleton_attribute)
+        cls.__new__ = lambda kls: getattr(kls, mangled_instance)
 
-        return cls
-
-    @staticmethod
-    def mangle_attribute(name, attribute):
-        """
-        Mangle private attributes:
-            cls.attribute     => cls.attribute
-            cls._attribute    => cls._attribute
-            cls.__attribute   => cls._name__attribute  <-----
-            cls.__attribute__ => cls.__attribute__
-        """
-        if attribute.startswith('__') and not attribute.endswith('__'):
-            attribute = '_' + name + attribute
-        return attribute
+        super().__init__(name, bases, attrs)

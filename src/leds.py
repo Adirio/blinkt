@@ -32,7 +32,14 @@ from .singleton import Singleton
 NUM_LEDS = 8
 
 
-class Array(tuple, metaclass=Singleton):
+class _Tuple(tuple):
+    """Adapter class that removes keyword-arguments from __init_subclass__"""
+    def __init_subclass__(cls, **kwargs):
+        """Remove keyword-arguments as tuple do not accept them"""
+        return super().__init_subclass__()
+
+
+class Array(_Tuple, metaclass=Singleton):
     class Led:
         __slots__ = ('_color', '_brightness', '_lock', '_ownership')
 
