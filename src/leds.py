@@ -79,6 +79,12 @@ class Array(_Tuple, metaclass=Singleton):
             return False
 
         @property
+        def all(self) -> Tuple[Color, int]:
+            """Returns (color, brightness)"""
+            with self._lock:
+                return self._color, self._brightness
+
+        @property
         def color(self) -> Color:
             with self._lock:
                 return self._color
