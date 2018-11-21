@@ -52,8 +52,8 @@ class Array(_Tuple, metaclass=Singleton):
 
         def __str__(self) -> str:
             with self._lock:
-                return "<Led color={} brightness={}>".format(
-                    self._color, self._brightness / MAX_BRIGHTNESS)
+                return "<Led color={} brightness={}/{}>".format(
+                    self._color, self._brightness, MAX_BRIGHTNESS)
 
         def __enter__(self) -> "Array.Led":
             # Initialization
@@ -114,7 +114,7 @@ class Array(_Tuple, metaclass=Singleton):
 
     def __str__(self) -> str:
         with self._lock:
-            return "[{}]".format(", ".join(map(str, self)))
+            return "({})".format(", ".join(map(str, self)))
 
     def __enter__(self) -> "Array":
         # Initialization
