@@ -74,7 +74,7 @@ class Board(metaclass=Singleton):
         """Setup the board"""
         with self._lock:
             # Setup the GPIO if it is unset
-            if self._counter == 1:
+            if self._counter == 0:
                 GPIO.setmode(CHANNEL_MODE)
                 GPIO.setwarnings(False)
                 GPIO.setup(DATA_CHANNEL, GPIO.OUT)
