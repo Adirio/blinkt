@@ -29,9 +29,9 @@ from typing import Optional, Type
 from .leds import Array
 from .singleton import Singleton
 
-# import RPi.GPIO as GPIO
+import RPi.GPIO as GPIO
 
-# CHANNEL_MODE = GPIO.BOARD
+CHANNEL_MODE = GPIO.BOARD
 DATA_CHANNEL = 16
 CLOCK_CHANNEL = 18
 CLOCK_PERIOD = 0.000001
@@ -75,11 +75,10 @@ class Board(metaclass=Singleton):
         with self._lock:
             # Setup the GPIO if it is unset
             if self._counter == 1:
-                # GPIO.setmode(CHANNEL_MODE)
-                # GPIO.setwarnings(False)
-                # GPIO.setup(DATA_CHANNEL, GPIO.OUT)
-                # GPIO.setup(CLOCK_CHANNEL, GPIO.OUT)
-                pass
+                GPIO.setmode(CHANNEL_MODE)
+                GPIO.setwarnings(False)
+                GPIO.setup(DATA_CHANNEL, GPIO.OUT)
+                GPIO.setup(CLOCK_CHANNEL, GPIO.OUT)
 
             # Increment the counter
             self._counter += 1
@@ -104,7 +103,7 @@ class Board(metaclass=Singleton):
                     self._display()
 
                 # Cleanup the GPIO
-                # GPIO.cleanup()
+                GPIO.cleanup()
 
         # Raise exceptions if any
         return False
@@ -142,25 +141,23 @@ class Board(metaclass=Singleton):
         self._clear = False
 
     def _clock(self) -> None:
-        # GPIO.output(CLOCK_CHANNEL, True)
+        GPIO.output(CLOCK_CHANNEL, True)
         sleep(self._half_period)
-        # GPIO.output(CLOCK_CHANNEL, False)
+        GPIO.output(CLOCK_CHANNEL, False)
         sleep(self._half_period)
 
     def _send_bit(self, value: bool) -> None:
-        print(str(int(value)), end='')  # GPIO.output(DATA_CHANNEL, value)
+        GPIO.output(DATA_CHANNEL, value)
         self._clock()
 
     def _send_bits(self, value: bool, n: int) -> None:
-        print(str(int(value))*n, end='')  # GPIO.output(DATA_CHANNEL, value)
+        GPIO.output(DATA_CHANNEL, value)
         for _ in range(n):
             self._clock()
 
     def _display(self) -> None:
-        print("Sending: ", end='')
         # Start frame
         self._send_bits(False, 32)
-        print()
         # Led frames
         for led in self._array:
             color, brightness = led.all
@@ -168,22 +165,17 @@ class Board(metaclass=Singleton):
             self._send_bits(True, 3)
             for bit in ((brightness >> i) & 1 for i in range(4, -1, -1)):
                 self._send_bit(bit)
-            print(' ', end='')
             # Second byte: blue
             for bit in ((color.b >> i) & 1 for i in range(7, -1, -1)):
                 self._send_bit(bit)
-            print(' ', end='')
             # Second byte: green
             for bit in ((color.g >> i) & 1 for i in range(7, -1, -1)):
                 self._send_bit(bit)
-            print(' ', end='')
             # Second byte: red
             for bit in ((color.r >> i) & 1 for i in range(7, -1, -1)):
                 self._send_bit(bit)
-            print()
         # End frame
         self._send_bits(True, (len(self._array) + 1) // 2)
-        print()
 
     def display(self) -> None:
         with self._lock:
