@@ -100,6 +100,9 @@ class Array(_Tuple, metaclass=Singleton):
 
         @brightness.setter
         def brightness(self, value: float) -> None:
+            # Check boundaries
+            value = 1.0 if value >= 1.0 else 0.0 if value <= 0.0 else value
+
             with self._ownership, self._lock:
                 self._brightness = int(value * MAX_BRIGHTNESS)
 
